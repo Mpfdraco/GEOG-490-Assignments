@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <title>University of Oregon Mapping</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <!--    Include the reference to the Mapbox JavaScript here in the <head> of the page    -->
+      <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js'></script>    
+
+
+          
+    <!--    Include the reference to the Mapbox CSS here in the <head> of the page    -->
+      <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        /* Insert the CSS code here between the <style> tags */
+        #title { z-index: 9999; 
+            background-color:rgb(153, 245, 240); 
+            opacity: 85%; 
+            text-align: center ;
+        }
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+
+    </style>
+  </head>
+
+  <body>
+    <!--  Insert the map div here in the <body> of the page  -->
+    <div id='map'>
+    </div>
+
+    <!--  Insert the tile div here (part V) -->
+    <div id='title'>
+        <h1>My Map of Portland For GEOG 490</h1>
+        <h2>By: Matt Ferry</h2>
+    </div>
+
+  
+    <script>
+        // Insert the JavaScript within the <script> tags, within the body   
+        // Start with the Mapbox access token here
+
+        mapboxgl.accessToken = 'pk.eyJ1IjoibXBmZHJhY28iLCJhIjoiY2xnNWY4b2FsMDJzaTNycG9tdzdjeTQ1cSJ9.uh563exjNY7uA5oyBS519g';
+
+        
+ 
+   
+        // Then initialize the map here
+        var myMap = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mpfdraco/clgb4di1o000601rm30cj9w7j', // stylesheet location
+                center: [-122.6788,45.5212],
+                zoom: 11
+                });
+    
+
+        // Add popup markers here  (part IV)
+        var marker = new mapboxgl.Marker()
+        .setLngLat([-122.6788, 45.5212])
+        .setPopup(popup) //add the popup with the variable name 'popup' to the marker 
+        .addTo(myMap); // add the open marker to the map
+
+        var marker2 = new mapboxgl.Marker({color:'red'})
+        .setLngLat([-122.69, 45.55]) // starting position [lng, lat] 
+        .addTo(myMap);
+
+        var popup = new mapboxgl.Popup({ offset: 25 })
+        .setHTML('Hello World. Welcome to Portland!');
+
+        var marker3 = new mapboxgl.Marker({color:'grey'}) // Le Pigeon
+        .setLngLat([-122.6578662, 45.5227451]) // 738 E Burnside St, Portland, OR 97214
+        .setPopup(popup) //add the popup with the variable name 'popup' to the marker 
+        .addTo(myMap); // add the open marker to the map
+
+        var popup_layer_lepigeon = new mapboxgl.Popup({closeOnClick: false, anchor: 'top-left'}) 
+        .setLngLat([-122.6578662, 45.5227451]) //popup coordinates
+        .setHTML('<a href="https://lepigeon.com/">Le Pigeon</a>') //popup text
+        .addTo(myMap); //add this popup to the map!
+
+
+     
+         // Add any other variables such as markers here (part III)
+        
+
+        // Add optional advanced "On load" function here
+        
+    </script>
+
+  </body>
