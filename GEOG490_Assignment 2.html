@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html>
+
+
+  <head>
+    <meta charset='utf-8' />
+    <title>Fixed Map</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <!--    1.1.  Include the reference to the Mapbox JavaScript here in the <head> of the page  -->
+    
+        <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js'></script>
+
+
+    <!--    1.2 Include the reference to the Mapbox CSS here in the <head> of the page  -->
+
+
+        <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css' rel='stylesheet' />
+
+
+    <style>
+        #title { z-index: 9999; 
+            text-align: center ;
+        }
+        /* 1.4 Insert the CSS code here between the <style> tags */
+            body { margin:50px; padding:0; display: grid; background-color: #F4DC79;}
+        /* 2.5.2 Insert additional CSS code here between the <style> tags */
+        /* 3.5.2 Insert CSS code for map 3 */
+        /* Attempt at using the fly feature */
+        #fly {
+            display: block; /* displays over the map */
+            position: relative; /* displays over the map */
+            margin: 0px auto; 
+            width: 50%;
+            height: 40px;
+            padding: 10px;
+            border: 3px;
+            border-radius: 3px; /* rounded corners */
+            font-size: 12px;
+            text-align: center;
+            font-weight: bold;
+            color: #f42069;
+            background: #b4da55;
+        }
+        .map{
+            margin: auto; position:relative; height:300px; width:50%;
+        }
+    </style>
+  </head>
+
+
+  <body>
+        <div id='title'>
+        <h1>My Favorite Spots Growing Up</h1>
+        <h2>By: Matt Ferry</h2>
+        <!-- 1.3 Insert the div for the structure of the page here in the <body> of the page -->
+            <h1> Map 1: </h1>
+            <div class='map' id='map1';place></div>
+            
+            <hr>
+            
+            <h1> Map 2:</h1>
+            <div class='map' id='map2'></div>
+
+
+            <hr>
+
+
+            <h1> Map 3: </h1>
+            <div class='map' id='map3'></div>
+            <!-- <button id='fly'>Fly</button> -->
+
+
+        <script>
+            /* Insert the JavaScript within the <script> tags, within the body */
+            // 2.1 Start with the Mapbox access token
+
+
+            mapboxgl.accessToken = 'pk.eyJ1IjoibXBmZHJhY28iLCJhIjoiY2xnNWY4b2FsMDJzaTNycG9tdzdjeTQ1cSJ9.uh563exjNY7uA5oyBS519g'; //  Put your access token between the single quotes.
+
+
+            // var clickCounter = 1; // keep track of the number of times the user has clicked
+            // var flyLocations = [[-92.95508683044434, 44.92621270357421],[-92.93341946026621, 44.92400278853961],[-92.9096397449762, 44.93987481823216]]; // Where the map will fly to
+
+
+            // 2.2 Then initialize the first map
+
+
+            var map = new mapboxgl.Map({
+            container: 'map1', // id of a div on your page, where the map will be inserted
+            style: 'mapbox://styles/mpfdraco/clg5fkunf001d01mka1ob08ph',
+            center: [-92.95508683044434, 44.92621270357421], // starting position [lng, lat] eg. [-122.6788, 45.5212]
+            zoom: 15 // starting zoom 
+        });
+
+
+            // 2.3 Add any other variables (such as popups and markers) to the first map
+
+
+            var popup = new mapboxgl.Popup()
+                    .setText('This is the Dairy Queen I went to growing up.');
+
+
+            var marker = new mapboxgl.Marker({color:'#007AC1'})
+                .setLngLat([-92.95508683044434, 44.92621270357421]) // starting position [lng, lat]
+                .setPopup(popup) //add the popup named "popup" to this marker 
+		        .addTo(map); // add it to the map with the ID "map"
+
+
+            // 2.4 Add arguments to disable the map interactivity here
+            // Disable drag and zoom handlers.
+            map.dragPan.disable();
+            map.scrollZoom.disable();
+            map.boxZoom.disable();
+            map.dragRotate.disable();
+            map.keyboard.disable();
+            map.doubleClickZoom.disable();
+            map.touchZoomRotate.disable();
+            map.touchZoomRotate.disableRotation();
+
+
+
+
+            // 2.5.3 Then initialize the 2nd map
+
+
+            var map2 = new mapboxgl.Map({
+            container: 'map2', // id of a div on your page, where the map will be inserted
+            style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
+            center: [-92.93341946026621, 44.92400278853961], // starting position [lng, lat] eg. [-122.6788, 45.5212]
+            zoom: 15 // starting zoom 
+        });
+
+
+            // 2.5.4 Add any other variables (such as markers) to the second map
+
+
+            var popup2 = new mapboxgl.Popup()
+            .setText('This was one of my favorite fast foods growing up.');
+
+
+            var marker2 = new mapboxgl.Marker({color:'#E78321'})
+            .setLngLat([-92.93341946026621, 44.92400278853961]) // starting position [lng, lat] 
+            .setPopup(popup2) //add the popup to the marker 
+            .addTo(map2); // id it to the map with the ID *map2*
+
+
+            // 2.5.5 Add arguments to disable the second map's interactivity here
+
+
+            map2.dragPan.disable();
+            map2.scrollZoom.disable();
+            map2.boxZoom.disable();
+            map2.dragRotate.disable();
+            map2.keyboard.disable();
+            map2.doubleClickZoom.disable();
+            map2.touchZoomRotate.disable();
+            map2.touchZoomRotate.disableRotation();
+
+
+            // 3.5.3 Then initialize the 3rd map
+
+
+            var map3 = new mapboxgl.Map({
+            container: 'map3', // id of a div on your page, where the map will be inserted
+            style: 'mapbox://styles/mapbox/streets-v11', // stylesheet location
+            center: [-92.9096397449762, 44.93987481823216], // starting position [lng, lat] eg. [-122.6788, 45.5212]
+            zoom: 15 // starting zoom 
+        });
+
+
+            // 3.5.4 Add any other variables (such as markers) to the second map
+
+
+            var popup3 = new mapboxgl.Popup()
+            .setText('This was my favorite Target in Minnesota.');
+
+
+            var marker3 = new mapboxgl.Marker({color:'#cc0000'})
+            .setLngLat([-92.9096397449762, 44.93987481823216]) // put the marker at the first starting position in the flyLocations array [lng, lat]
+            .setPopup(popup3) //add the popup to the marker 
+            .addTo(map3);
+        
+            // 3.5.5 Add arguments to disable the third map's interactivity here
+            
+            
+            map3.dragPan.disable();
+            map3.scrollZoom.disable();
+            map3.boxZoom.disable();
+            map3.dragRotate.disable();
+            map3.keyboard.disable();
+            map3.doubleClickZoom.disable();
+            map3.touchZoomRotate.disable();
+            map3.touchZoomRotate.disableRotation();
+            
+            
+            
+            // var popup4 = new mapboxgl.Popup()
+            // .setText('This is my favorite Target from Minnesota.');
+
+
+            // var marker4 = new mapboxgl.Marker({color:'DarkRed'})
+            // .setLngLat(flyLocations[1]) // put the marker at the second starting position in the flyLocations array [lng, lat]
+            // .setPopup(popup4) //add the popup to the marker 
+            // .addTo(map3);
+
+
+
+
+            
+
+
+            // add a 'Listener' to the div with the ID 'fly', that's the button.
+        //     document.getElementById('fly').addEventListener('click', function () {
+        //     console.log("flying to " + flyLocations[clickCounter])
+        //     map4.flyTo({
+        //         center: flyLocations[clickCounter] // look up the value of the click counter in the flyLocations array.
+        //     });
+
+
+        //     // update the click counter to the next location
+        //     clickCounter = clickCounter +1;
+        //     if (clickCounter > flyLocations.length-1) clickCounter = 0; // if the user has clicked more times than the length of the flyLocations array, reset it to 0.
+
+
+        // });
+        </script>
+  </body>
+</html>
