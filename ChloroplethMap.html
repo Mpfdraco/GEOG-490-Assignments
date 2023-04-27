@@ -129,7 +129,7 @@
             container: 'renters', // owners map div 
             style: 'mapbox://styles/mapbox/dark-v10', // Mapbox light style so we can observe the swipe
             center: [-122.6784, 45.5152],// Use the same center as your other map so that they are perfectly aligned
-            zoom: 10
+            zoom: 8.7
         });
 
         renterMap.on('load', function () {
@@ -205,6 +205,8 @@
         map.on('zoomend', function (e) {
             console.log(ownerMap.getZoom())
         });
+
+        //nodefaultattribution?
     </script>
 
 </body>
