@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8' />
+    <title>Swipe between maps</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css' rel='stylesheet' />
+
+    <!-- JS and CSS for the swipe plugin -->
+    <script src='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.js'></script>
+    <link rel='stylesheet'
+        href='https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-compare/v0.4.0/mapbox-gl-compare.css'
+        type='text/css' />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        body * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+
+        #fly {
+            display: block;
+            /* displays over the map */
+            position: relative;
+            /* displays over the map */
+            margin: 0px auto;
+            width: 50%;
+            height: 40px;
+            padding: 10px;
+            border: 3px;
+            border-radius: 3px;
+            /* rounded corners */
+            font-size: 12px;
+            text-align: center;
+            font-weight: bold;
+            color: #d4991a;
+            background: #ac2fdd;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="comparison-container">
+        <div id='owners' class='map'></div> <!-- div for owners map div -->
+        <div id='renters' class='map'></div> <!--  div for renters map div -->
+    </div>
+
+    <button id='fly'>Reset View</button>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoibXBmZHJhY28iLCJhIjoiY2xnNWY4b2FsMDJzaTNycG9tdzdjeTQ1cSJ9.uh563exjNY7uA5oyBS519g'; //  Put your access token between the single quotes.
+        var ownerMap = new mapboxgl.Map({
+            container: 'owners', // owners map div 
+            style: 'mapbox://styles/mapbox/dark-v10', // Mapbox dark style 
+            center: [-122.6784, 45.5152],
+            zoom: 8.7 // Changed the zoom to 8.7 so that it shows the entire area at the start 
+        });
+
+        ownerMap.on('load', function () {
+            ownerMap.addLayer({
+                id: 'Owner Data',
+                type: "fill",
+                source: {
+                    type: 'vector',
+                    url: 'mapbox://mpfdraco.dp9v56he'  //input your tileset ID url e.g. 'mapbox://jomerson.6ykhlovc' 
+                },
+                'source-layer': 'Owner-Renter-Pop-7786ec', //input your source layer name e.g. 'Owner-Renter-Pop-ca08iw'
+                paint: {
+                    'fill-color': //Changed the color to Purple shades
+                        ["step",
+                            ["get", "Own"],
+                            "hsl(265, 100%, 97%)",
+                            17.0,
+                            "hsl(270, 47%, 82%)",
+                            22.0,
+                            "hsl(273, 57%, 63%)",
+                            27.0,
+                            "#8631bf",
+                            32.0,
+                            "hsl(280, 90%, 32%)"
+                        ],
+                    "fill-opacity": 0.7
+                }
+
+            });
+        });
+
+        ownerMap.on('mousemove', 'Owner Data', function (e) {
+
+            // Change the cursor style as a UI indicator.
+            ownerMap.getCanvas().style.cursor = 'pointer';
+
+            var coordinates = e.lngLat;
+            var description = e.features[0].properties.Own;
+
+            // Populate the popup and set its coordinates
+            // based on the feature found.
+            popup.setLngLat(coordinates)
+                .setHTML("Owners: " + description + "%")
+                .addTo(ownerMap);
+        });
+
+        ownerMap.on('mouseleave', 'Owner Data', function () {
+            ownerMap.getCanvas().style.cursor = '';
+            popup.remove();
+        });
+
+
+
+        var renterMap = new mapboxgl.Map({
+            container: 'renters', // owners map div 
+            style: 'mapbox://styles/mapbox/dark-v10', // Mapbox light style so we can observe the swipe
+            center: [-122.6784, 45.5152],// Use the same center as your other map so that they are perfectly aligned
+            zoom: 10
+        });
+
+        renterMap.on('load', function () {
+            renterMap.addLayer({
+                id: 'Renter Data',
+                type: "fill",
+                source: {
+                    type: 'vector',
+                    url: 'mapbox://mpfdraco.dp9v56he' //input your tileset ID URL
+                },
+                'source-layer': 'Owner-Renter-Pop-7786ec', //input your source layer name e.g. Owner-Renter-Pop-dr7310
+                paint: {                // Changed the color to Orange shades
+                    'fill-color': ["step",
+                        ["get", "Rent"],
+                        "hsl(30, 100%, 97%)",
+                        17.0,
+                        "hsl(36, 47%, 82%)",
+                        22.0,
+                        "hsl(40, 57%, 63%)",
+                        27.0,
+                        "#bf9e31",
+                        32.0,
+                        "hsl(50, 90%, 32%)"],
+                    "fill-opacity": 0.7
+                }
+            });
+        });
+
+        renterMap.on('mousemove', 'Renter Data', function (e) {
+
+            // Change the cursor style as a UI indicator.
+            renterMap.getCanvas().style.cursor = 'pointer';
+
+            var coordinates = e.lngLat;
+            var description = e.features[0].properties.Rent;
+
+            // Populate the popup and set its coordinates based on the feature found.
+            popup.setLngLat(coordinates)
+                .setHTML("Renters: " + description + "%")
+                .addTo(renterMap);
+        });
+
+        renterMap.on('mouseleave', 'Renter Data', function () {
+            renterMap.getCanvas().style.cursor = '';
+            popup.remove();
+        });
+
+        var popup = new mapboxgl.Popup({
+            closeButton: false,
+            closeOnClick: false
+        });
+        // A selector or reference to HTML element
+        var container = '#comparison-container';
+
+        var map = new mapboxgl.Compare(ownerMap, renterMap, container, {
+        })
+
+        const nav = new mapboxgl.NavigationControl(); // Added a zoom layer
+        ownerMap.addControl(nav, 'top-left');
+
+        const nav2 = new mapboxgl.NavigationControl(); // Had to add it to both maps
+        renterMap.addControl(nav2, 'top-left');
+
+        // add a 'Listener' to the div with the ID 'fly', that's the button.
+        document.getElementById('fly').addEventListener('click', function () {
+            ownerMap.jumpTo({
+                center: [-122.6784, 45.5152], //new center.
+                zoom: 8.7,
+                speed: 0.2
+            });
+        });
+
+        map.on('zoomend', function (e) {
+            console.log(ownerMap.getZoom())
+        });
+    </script>
+
+</body>
+
+</html>
