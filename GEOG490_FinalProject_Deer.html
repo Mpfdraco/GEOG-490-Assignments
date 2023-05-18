@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8' />
+    <title>Deer 108's Path</title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v2.2.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        /*  stlye for paragraph tags */
+        p {
+            color: white;
+        }
+
+        /* style for heading level 4 tags */
+        h4 {
+            color: white;
+            margin-left: 10px;
+        }
+
+        /*  style for items with the class "LegendContainer" */
+        .LegendContainer {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            z-index: 2;
+            width: 300px;
+            height: 40px;
+            background: rgba(80, 80, 80, .75);
+            transition: width 2s, height 2s;
+            /* this is the time it takes for the container to transition */
+            border-radius: 7px;
+        }
+
+        /*  style for items with the class "descriptionPanel" */
+        .descriptionPanel {
+            position: absolute;
+            bottom: 65px;
+            left: 20px;
+            z-index: 2;
+            width: 300px;
+            height: 40px;
+            background: rgba(80, 80, 80, .75);
+            transition: width 2s, height 2s;
+            overflow: hidden;
+            border-radius: 7px;
+        }
+
+        /*  style for items with the class "descriptionPanel" when active */
+        .LegendContainer:active {
+            width: 240px;
+            height: 250px;
+        }
+
+        /* style for items with the class "legendItem" */
+        .legendItem {
+            margin: 0px;
+            padding-left: 10px;
+            display: inline-block;
+            margin: auto;
+            transform: translate(50%, 50%);
+        }
+
+
+        /* style for items with the class "layerDescription" */
+        .layerDescription {
+            color: white;
+            padding-left: 10px;
+        }
+
+
+        .renter {
+            color: #990011FF;
+            /* Cherry Red */
+        }
+
+        .owner {
+            color: #2BAE66FF;
+            /* Island Green */
+        }
+
+        /* style for items with the class "chevron" */
+        .chevron {
+            position: relative;
+            margin-left: 45%;
+            font-size: x-large;
+            color: white;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <!--class Attribute needs to be changed to "personal correspondence" with Matthew Kauffman, Wyoming Migration Initiative-->
+    <!-- Adds a description Panel in the bottom left -->
+    <div class="descriptionPanel" id="descriptionPanel" style="height: auto;">
+        <span onClick=panelSelect() id="glyph" class="chevron glyphicon glyphicon-chevron-down"></span>
+        <hr />
+        <h4>Deer 108's Migration Path</h4>
+        <hr>
+        <!-- <input id="slider" type="range" min="0" max="11" step="1" value="0"> -->
+        <p>Info Blurb about the beautiful and graceful Deer 108</p>
+        <hr>
+        <h4> Seasons </h4>
+        <hr>
+        <h2>Spring <br>
+        Fall</h2>
+        <hr>
+        <h4>Legend</h4>
+        <p style="margin-left: 10px; margin-right: 10px;">
+            2014 <br>
+            2015 <br>
+            2016 <br>
+            2017 <br>
+            2018 <br>
+            2019 <br>
+            2020 <br>
+            2021
+        </p>
+    </div>
+
+    <!-- Legend for the map -->
+    <div class="LegendContainer">
+        <div class="legendItem">
+            <span class="owner">&#11044;</span>
+            <span class="layerDescription">Spring</span>
+        </div>
+        <div class="legendItem">
+            <span class="renter">&#11044;</span>
+            <span class="layerDescription">Fall</span>
+        </div>
+    </div>
+
+    <div id='map'></div>
+    <script>
+
+        mapboxgl.accessToken = 'pk.eyJ1IjoibXBmZHJhY28iLCJhIjoiY2xnNWY4b2FsMDJzaTNycG9tdzdjeTQ1cSJ9.uh563exjNY7uA5oyBS519g'; //  Put your access token between the single quotes.
+        var bounds = [
+            [-110.97806587646362, 41.74010864207762], // Southwest coordinates
+            [-108.76241374371843, 43.455283358019564] // Northeast coordinates 43.455283358019564, -110.76840408073912
+        ]
+        var map = new mapboxgl.Map({
+            container: 'map', // container id
+            style: 'mapbox://styles/mpfdraco/clhglqpzq002c01r5agxx8n0v', // stylesheet location
+            center: [-109.56072551407959, 42.4252819978056], //42.4252819978056, -109.56072551407959
+            zoom: 8,
+            //minZoom: 6, // pick your own
+            maxBounds: bounds // Sets bounds from variable above
+        });
+
+
+
+        //Southeast, 41.74010864207762, -108.60589241626656
+        //Northwest, 43.60728769581597, -110.97806587646362
+
+        // Add zoom and rotation controls to the map.
+        const nav = new mapboxgl.NavigationControl();
+        map.addControl(nav, 'top-right');
+
+        // Allow the legend to be interactive
+        var state = { panelOpen: true };
+
+        function panelSelect(e) {
+            if (state.panelOpen) {
+                document.getElementById('descriptionPanel').style.height = '26px';
+                document.getElementById('glyph').className = "chevron glyphicon glyphicon-chevron-up";
+                state.panelOpen = false;
+            } else {
+                document.getElementById('descriptionPanel').style.height = '250px';
+                document.getElementById('glyph').className = "chevron glyphicon glyphicon-chevron-down";
+                state.panelOpen = true;
+            }
+        }
+        document.getElementById('slider').addEventListener('input', (e) => {
+            const month = parseInt(e.target.value, 10);
+            filterBy(month);
+        });
+    </script>
+
+</body>
+
+</html>
